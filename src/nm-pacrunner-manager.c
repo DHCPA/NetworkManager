@@ -84,7 +84,7 @@ config_new (NMPacrunnerManager *manager, char *tag, GVariant *args)
 	config = g_slice_new0 (Config);
 	config->manager = manager;
 	config->tag = tag;
-	config->args = args;
+	config->args = g_variant_ref_sink (args);
 	config->refcount = 1;
 
 	return config;
@@ -258,13 +258,12 @@ static void
 pacrunner_send_config (NMPacrunnerManager *self, Config *config)
 {
 	NMPacrunnerManagerPrivate *priv = NM_PACRUNNER_MANAGER_GET_PRIVATE (self);
-	gs_free char *args_str = NULL;
 
 	if (priv->pacrunner) {
-		if (_LOGT_ENABLED ()) {
-			args_str = g_variant_print (config->args, FALSE);
-			_LOGT ("sending proxy config for '%s': %s", config->tag, args_str);
-		}
+		gs_free char *args_str = NULL;
+
+		_LOGT ("sending proxy config for '%s': %s", config->tag,
+		       (args_str = g_variant_print (config->args, FALSE)));
 
 		config_ref (config);
 		g_clear_pointer (&config->path, g_free);
@@ -403,7 +402,7 @@ nm_pacrunner_manager_send (NMPacrunnerManager *self,
 	}
 
 	config = config_new (self, g_strdup (tag),
-	                     g_variant_ref_sink (g_variant_new ("(a{sv})", &proxy_data)));
+	                     g_variant_new ("(a{sv})", &proxy_data));
 	priv->configs = g_list_append (priv->configs, config);
 
 	/* Send if pacrunner is available on bus, otherwise
