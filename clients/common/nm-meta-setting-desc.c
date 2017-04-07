@@ -4579,6 +4579,19 @@ _set_fcn_wireless_security_psk (ARGS_SET_FCN)
 	return TRUE;
 }
 
+static gconstpointer
+_get_fcn_user_data (ARGS_GET_FCN)
+{
+	RETURN_UNSUPPORTED_GET_TYPE ();
+
+	if (!NM_FLAGS_HAS (get_flags, NM_META_ACCESSOR_GET_FLAGS_ACCEPT_STRV_NAMED)) {
+		/* user data can only be returned as name-value strv. */
+		return NULL;
+	}
+
+	return NULL;
+}
+
 /*****************************************************************************/
 
 #define DEFINE_PROPERTY_TYPE(...) \
@@ -6155,6 +6168,17 @@ static const NMMetaPropertyInfo property_infos_TUN[] = {
 };
 
 #undef  _CURRENT_NM_META_SETTING_TYPE
+#define _CURRENT_NM_META_SETTING_TYPE NM_META_SETTING_TYPE_USER
+static const NMMetaPropertyInfo property_infos_USER[] = {
+	{
+		PROPERTY_INFO_WITH_DESC (NM_SETTING_USER_DATA),
+		.property_type = DEFINE_PROPERTY_TYPE (
+			.get_fcn =                  _get_fcn_user_data,
+		),
+	},
+};
+
+#undef  _CURRENT_NM_META_SETTING_TYPE
 #define _CURRENT_NM_META_SETTING_TYPE NM_META_SETTING_TYPE_VLAN
 static const NMMetaPropertyInfo property_infos_VLAN[] = {
 	{
@@ -6678,7 +6702,7 @@ const NMMetaSettingInfoEditor nm_meta_setting_infos_editor[] = {
 	SETTING_INFO (TEAM),
 	SETTING_INFO (TEAM_PORT),
 	SETTING_INFO (TUN),
-	SETTING_INFO_EMPTY (USER),
+	SETTING_INFO (USER),
 	SETTING_INFO (VLAN),
 	SETTING_INFO (VPN),
 	SETTING_INFO (VXLAN),
