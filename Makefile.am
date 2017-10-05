@@ -1045,6 +1045,7 @@ src_cppflags = \
 	-DNMSTATEDIR=\"$(nmstatedir)\" \
 	-DNMLIBDIR=\"$(nmlibdir)\" \
 	\
+	-DDHCPCANON_PATH=\"$(DHCPCANON_PATH)\" \
 	-DDHCLIENT_PATH=\"$(DHCLIENT_PATH)\" \
 	-DDHCPCD_PATH=\"$(DHCPCD_PATH)\" \
 	\
@@ -1362,6 +1363,7 @@ src_libNetworkManager_la_SOURCES = \
 	src/devices/nm-device-vxlan.c \
 	src/devices/nm-device-vxlan.h \
 	\
+	src/dhcp/nm-dhcp-dhcpcanon.c \
 	src/dhcp/nm-dhcp-dhclient.c \
 	src/dhcp/nm-dhcp-dhcpcd.c \
 	src/dhcp/nm-dhcp-helper-api.h \
